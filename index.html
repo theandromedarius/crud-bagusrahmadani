@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pendataan Siswa</title>
+
+    <!-- Style -->
+    <style>
+      .tabel,
+      tr,
+      th,
+      td {
+        border: 1px solid #000;
+        padding: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Pendataan Siswa</h1>
+    <p>
+      Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eligendi, quam.
+    </p>
+    <div>
+      <input type="text" id="name" placeholder="Nama Lengkap" />
+      <input type="text" id="class" placeholder="Kelas" />
+      <select id="major">
+        <option>Jurusan</option>
+        <option value="Teknik Komputer Jaringan">
+          Teknik Komputer Jaringan
+        </option>
+        <option value="Teknik Kendaraan Ringan">Teknik Kendaraan Ringan</option>
+        <option value="Teknik Audio Video">Teknik Audio Video</option>
+        <option value="Rekayasa Perangkat Lunak">
+          Rekayasa Perangkat Lunak
+        </option>
+      </select>
+      <button id="button" onclick="saveData()">Simpan</button>
+    </div>
+    <table style="margin-top: 15px">
+      <thead>
+        <tr>
+          <th>No.</th>
+          <th>Nama Lengkap</th>
+          <th>Kelas</th>
+          <th>Jurusan</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="result"></tbody>
+    </table>
+
+    <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+      const editData = async (id, name, classroom, major) => {
+        document.getElementById("name").value = name;
+        document.getElementById("class").value = classroom;
+        document.getElementById("major").value = major;
+        document.getElementById("button").innerText = "Ubah";
+        document
+          .getElementById("button")
+          .setAttribute("onclick", `updateData(${id})`);
+      };
+
+      const updateData = async (id) => {
+        let nameForm = document.getElementById("name").value;
+        let classForm = document.getElementById("class").value;
+        let majorForm = document.getElementById("major").value;
+        await axios.patch(`http://localhost:3000/students/${id}`, {
+          name: nameForm,
+          class: classForm,
+          major: majorForm,
+        });
+      };
+
+      const saveData = async () => {
+        let nameForm = document.getElementById("name").value;
+        let classForm = document.getElementById("class").value;
+        let majorForm = document.getElementById("major").value;
+        await axios.post(`http://localhost:3000/students`, {
+          name: nameForm,
+          class: classForm,
+          major: majorForm,
+        });
+      };
+
+      const deleteData = async (id) => {
+        await axios
+          .delete(`http://localhost:3000/students/${id}`)
+          .then((Response) => {
+            console.log(response);
+          })
+          .catch((error) => {
+            console.log(error.message);
+          });
+      };
+
+      const getData = async () => {
+        await axios
+          .get(`http://localhost:3000/students`)
+          .then((Response) => {
+            let bucket = ``;
+            let students = Response.data;
+
+            if (students.length > 0) {
+              for (let i = 0; i < students.length; i++) {
+                bucket += `
+                  <tr>
+                    <td>${[i + 1]}</td>
+                    <td>${students[i].name}</td>
+                    <td>${students[i].class}</td>
+                    <td>${students[i].major}</td>
+                    <td>
+                      <button onclick="editData(
+                        '${students[i].id}',
+                        '${students[i].name}',
+                        '${students[i].class}',
+                        '${students[i].major}'
+                        )">Edit</button>
+                      <button onclick="deleteData(${
+                        students[i].id
+                      })">Hapus</button>
+                    </td>
+                  </tr>
+                `;
+              }
+            } else {
+              bucket += `
+                <tr>
+                  <td colspan="5" style="text-align: center">Data Tidak Ditemukan</td>
+                </tr>
+              `;
+            }
+
+            document.getElementById("result").innerHTML = bucket;
+          })
+          .catch((error) => {
+            let bucket = `
+              <tr>
+                <td colspan="5" style="text-align: center">${error.message}</td>
+              </tr>
+            `;
+            document.getElementById("result").innerHTML = bucket;
+          });
+      };
+      getData();
+    </script>
+  </body>
+</html>

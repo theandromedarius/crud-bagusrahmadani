@@ -1,0 +1,28 @@
+{
+  "students": [
+    {
+      "name": "Hashirama Senju",
+      "class": "X TKR 2",
+      "major": "Teknik Kendaraan Ringan",
+      "id": 2
+    },
+    {
+      "name": "Sakura Haruno",
+      "class": "Senin 2",
+      "major": "Teknik Komputer Jaringan",
+      "id": 3
+    },
+    {
+      "name": "Sawo Ijo",
+      "class": "MIP2",
+      "major": "Teknik Komputer Jaringan",
+      "id": 4
+    },
+    {
+      "name": "Muhammad Sumbul",
+      "class": "X TAV 2",
+      "major": "Teknik Audio Video",
+      "id": 5
+    }
+  ]
+}
